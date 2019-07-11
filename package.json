@@ -1,0 +1,22 @@
+{
+  "name": "my-blog-server",
+  "version": "1.0.0",
+  "description": "基于express框架的博客后台",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xingyemeng/my-blog-server.git"
+  },
+  "author": "杨少鑫",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xingyemeng/my-blog-server/issues"
+  },
+  "homepage": "https://github.com/xingyemeng/my-blog-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
