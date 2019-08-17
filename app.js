@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const config = require('./conf');
 const router = require('./routes');
 const bodyParser = require('body-parser');
+// const session = require('express-session');
 
 const app = express();
 // all environments
@@ -19,5 +20,12 @@ db.once('open', function () {
 });*/
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+//session 换成jwt认证
+/*app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    store: obj
+}))*/
 router(app);
 app.listen(config.port);

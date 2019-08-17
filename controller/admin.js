@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const BaseClass = require('../baseClass/baseClass');
 const time = require('time-formater');
+const jwt = require('jsonwebtoken');
 
 class Admin extends BaseClass{
     constructor() {
@@ -14,6 +15,12 @@ class Admin extends BaseClass{
     * 管理平台登陆
     * */
     async login(req, res, next) {
+/*
+测试session
+console.log(req.sessionID)
+req.sessionStore.all(function (err, lists) {
+    console.log(lists)
+})*/
         const {user_name, password, status = 1} = req.body;
         let newPassword = this.encryption(password);
         const cityInfo = await this.getPosition(req);
@@ -42,8 +49,10 @@ class Admin extends BaseClass{
             } else {
                 admin.city = cityInfo.city;
                 admin.save();
+                const token = jwt.sign({name: admin.user_name}, 'jiayan', { expiresIn: 60*60*1})
                 res.send({
                     starus: 0,
+                    token: token,
                     msg: '登陆成功！'
                 });
             }
