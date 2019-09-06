@@ -10,6 +10,7 @@ class Admin extends BaseClass{
         super();
         this.login = this.login.bind(this);
         this.register = this.register.bind(this);
+        this.getUserInfo = this.getUserInfo.bind(this);
     }
     /*
     * 管理平台登陆
@@ -49,9 +50,9 @@ req.sessionStore.all(function (err, lists) {
             } else {
                 admin.city = cityInfo.city;
                 admin.save();
-                const token = jwt.sign({name: admin.user_name}, 'jiayan', { expiresIn: 60*60*1})
+                const token = jwt.sign({name: admin.user_name}, 'jiayan', { expiresIn: 60*60*1});
                 res.send({
-                    starus: 0,
+                    status: 0,
                     token: token,
                     msg: '登陆成功！'
                 });
@@ -110,10 +111,55 @@ req.sessionStore.all(function (err, lists) {
                 city: cityInfo.city
             };
             await AdminModel.create(newAdmin);
+            global.acl.addUserRoles(user_name, 'admin');
             res.send('注册成功');
         } else {
             res.send('用户已存在');
         }
+    }
+    /*
+    * node_acl 根据用户名获取用户所拥有的角色
+    * */
+    getRoles(userId){
+        return new Promise((resolve, reject) => {
+            global.acl.userRoles(userId).then(
+                (roles) => {
+                    resolve(roles);
+                },
+                (err) => {
+                    reject(err);
+                }
+            );
+        });
+    }
+    /*
+    * 获取用户信息
+    * */
+    async getUserInfo(req, res) {
+        const userInfo = {};
+        const token = req.body.token;
+        try {
+            let decoded = jwt.verify(token, 'jiayan');
+            let admin = await AdminModel.findOne({user_name: decoded.name});
+            if(admin) {
+                let roles = await this.getRoles(admin.user_name);
+                userInfo.userName = admin.user_name;
+                userInfo.userId = admin._id;
+                userInfo.avatarImgPath = admin.avatar;
+                userInfo.access = roles;
+                res.send({
+                    status: 0,
+                    info: userInfo
+                });
+            }
+        } catch (e) {
+            console.log(e.message);
+            res.send({
+                status: 1,
+                info: 'token失效'
+            });
+        }
+
     }
 }
 module.exports = new Admin();
