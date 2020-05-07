@@ -16,7 +16,7 @@ const AclModel = require('./models/acl');
 });*/
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//session 换成jwt认证
+//session 换成jwt认证 tttttttt
 /*app.use(session({
     secret: 'keyboard cat',
     resave: false,
