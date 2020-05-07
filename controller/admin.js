@@ -111,7 +111,7 @@ req.sessionStore.all(function (err, lists) {
                 city: cityInfo.city
             };
             await AdminModel.create(newAdmin);
-            global.acl.addUserRoles(user_name, 'admin');
+            // global.acl.addUserRoles(user_name, 'admin');
             res.send('注册成功');
         } else {
             res.send('用户已存在');

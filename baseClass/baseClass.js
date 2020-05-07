@@ -1,4 +1,5 @@
 const axios = require('axios');
+const AdminModel = require('../models/admin')
 
 class BaseClass {
     constructor() {
@@ -30,6 +31,13 @@ class BaseClass {
             cityInfo.city = '定位失败';
         }
         return cityInfo;
+    }
+    /*
+    * 根据用户名获取用户 _id
+    * */
+    async getUserId(name) {
+        const userObj = await AdminModel.findOne({'user_name': name});
+        return userObj._id;
     }
 }
 module.exports = BaseClass;

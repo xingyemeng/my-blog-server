@@ -8,6 +8,7 @@ let acl = require('acl');
 const aclConf = require('./conf/aclConf')
 const app = express();
 app.use(express.static('uploads'))
+const AclModel = require('./models/acl');
 // all environments
 
 /*http.createServer(app).listen(app.get('port'), function(){
@@ -21,10 +22,20 @@ app.use(bodyParser.json());
     resave: false,
     saveUninitialized: true,
     store: obj
+
 }))*/
 mongoose.connect(config.url, {useNewUrlParser: true}, function (err) {
     global.acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'));
     global.acl.allow(aclConf);
+    AclModel.find(function (err, list) {
+        if(list.length === 0) {
+            AclModel.create(aclConf, function (err) {
+                if(err) {
+                    console.log('初始化角色信息失败');
+                }
+            });
+        }
+    })
     router(app);
 });
 app.listen(config.port);
