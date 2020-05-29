@@ -85,7 +85,10 @@ req.sessionStore.all(function (err, lists) {
     * 管理员注册
     * */
     async register(req, res, next) {
-        let mimeArr = req.file.mimetype.split('/');
+        if(!req.file) {
+            res.send('请上传用户头像')
+        }
+        let mimeArr = req.file.originalname.split('.');
         let len = mimeArr.length;
         let imgType = mimeArr[len - 1]
         const avatar = req.file.filename + '.' + imgType;
@@ -95,26 +98,43 @@ req.sessionStore.all(function (err, lists) {
             res.send('头像上传失败');
             return;
         }
-        const {user_name, password, status} = req.body;
-        const newPassword = this.encryption(password);
-        const admin = await AdminModel.findOne({user_name});
-        const cityInfo = await this.getPosition(req);
-        if(!admin){
-            const newAdmin = {
-                user_name,
-                password: newPassword,
-                id: 0,
-                avatar,
-                create_time: time().format('YYYY-MM-DD HH:mm:ss'),
-                admin: status === 1 ? '超级管理员' : '管理员',
-                status,
-                city: cityInfo.city
-            };
-            await AdminModel.create(newAdmin);
-            // global.acl.addUserRoles(user_name, 'admin');
-            res.send('注册成功');
-        } else {
-            res.send('用户已存在');
+        try{
+            const {user_name, password, status} = req.body;
+            const newPassword = this.encryption(password);
+            const admin = await AdminModel.findOne({user_name});
+            const cityInfo = await this.getPosition(req);
+            if(!admin){
+                const newAdmin = {
+                    user_name,
+                    password: newPassword,
+                    id: 0,
+                    avatar,
+                    create_time: time().format('YYYY-MM-DD HH:mm:ss'),
+                    admin: status === 1 ? '超级管理员' : '管理员',
+                    status,
+                    city: cityInfo.city
+                };
+                await AdminModel.create(newAdmin);
+                // global.acl.addUserRoles(user_name, 'admin');
+                res.send('注册成功');
+            } else {
+                fs.unlink(req.file.path + '.' + imgType, error => {
+                    if(error) {
+                        console.error('删除头像失败' + error)
+                    } else {
+                        res.send('用户已存在');
+                    }
+                })
+            }
+        } catch(err) {
+            fs.unlink(req.file.path + '.' + imgType, error => {
+                if(error) {
+                    console.error('删除头像失败' + error)
+                } else {
+                    res.send('用户注册失败')
+                    console.error('报错信息:' + err)
+                }
+            })
         }
     }
     /*
