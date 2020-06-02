@@ -95,6 +95,7 @@ req.sessionStore.all(function (err, lists) {
             res.send('头像上传失败');
             return;
         }
+        // 解决冲突
         const {user_name, password, status} = req.body;
         const newPassword = this.encryption(password);
         const admin = await AdminModel.findOne({user_name});
