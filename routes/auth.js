@@ -11,6 +11,10 @@ const AclController = require('../controller/acl')
 * 3.修改用户角色权限
 * */
 router.post('/addUserRoles', AuthController.addUserRoles);
+router.post('/removeUserRoles', AuthController.removeUserRoles);
+router.post('/userRoles', AuthController.userRoles);
+
+
 router.post('/addRoles', AclController.addRoles);
 router.post('/removeRole', AclController.removeRole);
 

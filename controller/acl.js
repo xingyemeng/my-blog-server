@@ -36,6 +36,9 @@ class Acl{
     }
 
     async removeRole(req, res, next) {
+        if(!req.body.roleName) {
+            res.send('请添加角色名称')
+        }
         let { roleName } = req.body;
         global.acl.removeRole(roleName, function(err) {
             if(err) {
