@@ -21,7 +21,7 @@ module.exports = Users;
         password: 'admin'
     },
     {
-        name: '王五',
+        name: '王五1',
         password: 'admin'
     }
 ];
