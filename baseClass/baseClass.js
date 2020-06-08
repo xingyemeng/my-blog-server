@@ -37,7 +37,8 @@ class BaseClass {
     * */
     async getUserId(name) {
         const userObj = await AdminModel.findOne({'user_name': name});
-        return userObj._id;
+
+        return userObj ? userObj._id :  null;
     }
 }
 module.exports = BaseClass;
