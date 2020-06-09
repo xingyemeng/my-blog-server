@@ -87,6 +87,7 @@ req.sessionStore.all(function (err, lists) {
     async register(req, res, next) {
         if(!req.file) {
             res.send('请上传用户头像')
+            return
         }
         let mimeArr = req.file.originalname.split('.');
         let len = mimeArr.length;
@@ -158,11 +159,14 @@ req.sessionStore.all(function (err, lists) {
     async getUserInfo(req, res) {
         const userInfo = {};
         const token = req.body.token;
+        req.session = {}
         try {
             let decoded = jwt.verify(token, 'jiayan');
             let admin = await AdminModel.findOne({user_name: decoded.name});
             if(admin) {
-                let roles = await this.getRoles(admin.user_name);
+                let userId = (await this.getUserId(admin.user_name)).toString()
+                req.session.userId = userId
+                let roles = await this.getRoles(userId);
                 userInfo.userName = admin.user_name;
                 userInfo.userId = admin._id;
                 userInfo.avatarImgPath = admin.avatar;
