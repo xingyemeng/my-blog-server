@@ -9,6 +9,7 @@ const aclConf = require('./conf/aclConf')
 const app = express();
 app.use(express.static('uploads'))
 const AclModel = require('./models/acl');
+const jwt = require('jsonwebtoken');
 // all environments
 
 /*http.createServer(app).listen(app.get('port'), function(){
@@ -24,6 +25,14 @@ app.use(bodyParser.json());
     store: obj
 
 }))*/
+// token中获取用户信息
+app.use(function(req, res, next) {
+    if(req.body.token) {
+        let decoded = jwt.verify(req.body.token, 'jiayan');
+        req.decoded = decoded
+    }
+    next()
+})
 mongoose.connect(config.url, {useNewUrlParser: true}, function (err) {
     global.acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'));
     global.acl.allow(aclConf);
