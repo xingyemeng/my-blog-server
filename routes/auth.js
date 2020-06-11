@@ -17,5 +17,7 @@ router.post('/userRoles', AuthController.userRoles);
 
 router.post('/addRoles', AclController.addRoles);
 router.post('/removeRole', AclController.removeRole);
+router.post('/roleHasResources', AclController.roleHasResources);
+router.post('/removeRoleResources', AclController.removeRoleResources);
 
 module.exports = router;

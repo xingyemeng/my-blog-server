@@ -50,7 +50,7 @@ req.sessionStore.all(function (err, lists) {
             } else {
                 admin.city = cityInfo.city;
                 admin.save();
-                const token = jwt.sign({name: admin.user_name}, 'jiayan', { expiresIn: 60*60*1});
+                const token = jwt.sign({name: admin.user_name, user_ID: admin._id.toString()}, 'jiayan', { expiresIn: 60*60*1});
                 res.send({
                     status: 0,
                     token: token,
@@ -159,14 +159,10 @@ req.sessionStore.all(function (err, lists) {
     async getUserInfo(req, res) {
         const userInfo = {};
         const token = req.body.token;
-        req.session = {}
         try {
-            let decoded = jwt.verify(token, 'jiayan');
-            let admin = await AdminModel.findOne({user_name: decoded.name});
+            let admin = await AdminModel.findOne({_id: req.decoded.user_ID});
             if(admin) {
-                let userId = (await this.getUserId(admin.user_name)).toString()
-                req.session.userId = userId
-                let roles = await this.getRoles(userId);
+                let roles = await this.getRoles(req.decoded.user_ID);
                 userInfo.userName = admin.user_name;
                 userInfo.userId = admin._id;
                 userInfo.avatarImgPath = admin.avatar;
@@ -177,6 +173,7 @@ req.sessionStore.all(function (err, lists) {
                 });
             }
         } catch (e) {
+            req.session = {}
             console.log(e.message);
             res.send({
                 status: 1,
