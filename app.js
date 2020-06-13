@@ -28,9 +28,19 @@ app.use(bodyParser.json());
 // token中获取用户信息
 app.use(function(req, res, next) {
     if(req.body.token) {
-        let decoded = jwt.verify(req.body.token, 'jiayan');
-        req.decoded = decoded
-    }
+        try{
+            let decoded = jwt.verify(req.body.token, 'jiayan');
+            req.decoded = decoded
+        } catch(e) {
+            console.log(e.message);
+            res.send({
+                status: 1,
+                info: 'token失效'
+            });
+            return
+        }
+        
+    } 
     next()
 })
 mongoose.connect(config.url, {useNewUrlParser: true}, function (err) {
