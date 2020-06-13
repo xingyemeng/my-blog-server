@@ -13,6 +13,7 @@ const Resources = require('../resource/index')
 class Acl{
     constructor() {
         this.removeRoleResources = this.removeRoleResources.bind(this)
+        this.addRoleResources = this.addRoleResources.bind(this)
     }
 
     async roleIsExist(roleName) {
@@ -23,7 +24,9 @@ class Acl{
             return false
         }
     }
-
+/**
+ * 添加角色以及所拥有的资源
+*/
     async addRoles(req, res, next) {
         let { roleName, allows } = req.body;
 
@@ -49,6 +52,7 @@ class Acl{
     }
 /**
  * 移除角色
+ * 待解决问题：删除前一定要删除该角色所有资源
  * 
 */
     async removeRole(req, res, next) {
@@ -120,15 +124,24 @@ class Acl{
         })
     }
 /**
- * 添加角色资源
+ * 添加角色资源，资源默认权限是get、post
+ * 问题：1.aclconfs数据表要更新 2.
 */
-    async addRoleResources() {
+    async addRoleResources(req, res) {
         let { roleName, resources } = req.body;
-        let roleIsExist = await this.roleIsExist(roleName)
+        let roleIsExist = await this.roleIsExist(arr[0].roles)
         if(!roleIsExist) {
             res.send('当前角色不存在')
             return
         }
+        global.acl.allow(arr, err => {
+            if(err) {
+                res.send('添加权限失败')
+                return
+            } else {
+                res.send('添加权限成功')
+            }
+        })
     }
 }
 

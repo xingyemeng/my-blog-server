@@ -50,7 +50,7 @@ req.sessionStore.all(function (err, lists) {
             } else {
                 admin.city = cityInfo.city;
                 admin.save();
-                const token = jwt.sign({name: admin.user_name, user_ID: admin._id.toString()}, 'jiayan', { expiresIn: 60*60*1});
+                const token = jwt.sign({name: admin.user_name, user_ID: admin._id.toString()}, 'jiayan', { expiresIn: 60*1});
                 res.send({
                     status: 0,
                     token: token,
@@ -159,8 +159,7 @@ req.sessionStore.all(function (err, lists) {
     async getUserInfo(req, res) {
         const userInfo = {};
         const token = req.body.token;
-        try {
-            let admin = await AdminModel.findOne({_id: req.decoded.user_ID});
+        let admin = await AdminModel.findOne({_id: req.decoded.user_ID});
             if(admin) {
                 let roles = await this.getRoles(req.decoded.user_ID);
                 userInfo.userName = admin.user_name;
@@ -172,14 +171,6 @@ req.sessionStore.all(function (err, lists) {
                     info: userInfo
                 });
             }
-        } catch (e) {
-            req.session = {}
-            console.log(e.message);
-            res.send({
-                status: 1,
-                info: 'token失效'
-            });
-        }
 
     }
 }
