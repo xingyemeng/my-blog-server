@@ -14,8 +14,11 @@ class Acl{
     constructor() {
         this.removeRoleResources = this.removeRoleResources.bind(this)
         this.addRoleResources = this.addRoleResources.bind(this)
+        this.addRoles = this.addRoles.bind(this)
     }
-
+/**
+ * 查询该角色是否存在
+*/
     async roleIsExist(roleName) {
         let roleExist = await AclModel.findOne({roles: roleName})
         if(roleExist){
@@ -25,10 +28,20 @@ class Acl{
         }
     }
 /**
+ * 资源名和资源路径转换
+*/
+    nameToPath(resources) {
+        return JSON.parse(resources).map(item => {
+            return Object.keys(Resources).find(key => {
+                return Resources[key].name === item
+            })
+        })
+    }
+/**
  * 添加角色以及所拥有的资源
 */
-    async addRoles(req, res, next) {
-        let { roleName, allows } = req.body;
+    async addRoles(req, res) {
+        let { roleName, resources } = req.body;
 
         let roleExist = await AclModel.findOne({roles: roleName})
         if(roleExist){
@@ -37,7 +50,7 @@ class Acl{
         }
         let newRole = new AclModel({
             roles: roleName,
-            allows: JSON.parse(allows)
+            allows: [{resources: this.nameToPath(resources), permissions:['get', 'post']}]
         });
         newRole.save(async function (err, product) {
             if(err) {
@@ -101,6 +114,7 @@ class Acl{
 
 /**
  * 删除角色资源
+ * 要能够删除所有资源
 */
     async removeRoleResources(req, res, next) {
         console.log(req.session)
@@ -129,17 +143,25 @@ class Acl{
 */
     async addRoleResources(req, res) {
         let { roleName, resources } = req.body;
-        let roleIsExist = await this.roleIsExist(arr[0].roles)
+        let roleIsExist = await this.roleIsExist(roleName)
         if(!roleIsExist) {
             res.send('当前角色不存在')
             return
         }
-        global.acl.allow(arr, err => {
+        let resourceList = this.nameToPath(resources)
+        global.acl.allow(roleName, resourceList, ['get', 'post'], err => {
             if(err) {
                 res.send('添加权限失败')
                 return
             } else {
+                // 要更新aclconfs集合
+                AclModel.findOneAndUpdate({roles: roleName}, {allows:[{resources: resourceList, permissions: ['get', 'post']}]}, function(err) {
+                    if(err) {
+                        console.log("更新aclconfs集合失败")
+                    }
+                })
                 res.send('添加权限成功')
+
             }
         })
     }

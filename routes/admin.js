@@ -6,6 +6,6 @@ const multer = require('multer');
 
 const upload = multer({ dest: 'uploads/' });   // 上传头像插件
 router.post('/login', Admin.login);
-router.post('/register', global.acl.middleware(1,function(req){return req.decoded.user_ID}), upload.single('avatar'), Admin.register);
+router.post('/register', upload.single('avatar'), Admin.register);
 router.post('/getUserInfo', Admin.getUserInfo);
 module.exports = router;

@@ -50,7 +50,7 @@ req.sessionStore.all(function (err, lists) {
             } else {
                 admin.city = cityInfo.city;
                 admin.save();
-                const token = jwt.sign({name: admin.user_name, user_ID: admin._id.toString()}, 'jiayan', { expiresIn: 60*1});
+                const token = jwt.sign({name: admin.user_name, user_ID: admin._id.toString()}, 'jiayan', { expiresIn: 60*60*1});
                 res.send({
                     status: 0,
                     token: token,

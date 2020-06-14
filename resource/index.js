@@ -17,6 +17,12 @@ module.exports = {
     '/auth/roleHasResources': {
         name: '角色拥有的资源'
     },
+    '/auth/addRoleResources': {
+        name: '添加角色拥有的资源'
+    },
+    '/auth/removeRoleResources': {
+        name: '删除角色拥有的资源'
+    },
     
     '/admin/login': {
         name: '登陆'

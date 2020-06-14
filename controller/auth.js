@@ -16,6 +16,8 @@ class AuthController extends BaseClass{
             res.send('当前用户不存在')
             return
         }
+        console.log(666)
+        return
         global.acl.addUserRoles(userId.toString(), roleName, err => {
             if(err) {
                 res.send('添加失败');

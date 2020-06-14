@@ -27,10 +27,12 @@ app.use(bodyParser.json());
 }))*/
 // token中获取用户信息
 app.use(function(req, res, next) {
-    if(req.body.token) {
+    if(req.body.token && req.path !== '/admin/register') {
         try{
             let decoded = jwt.verify(req.body.token, 'jiayan');
             req.decoded = decoded
+            req.session = {}
+            req.session.userId = decoded.user_ID
         } catch(e) {
             console.log(e.message);
             res.send({
