@@ -4,6 +4,11 @@ const AdminModel = require('../models/admin')
 class BaseClass {
     constructor() {
         this.key = 'H5FBZ-ATCRU-Z5RVM-23X7D-PSS3F-4MBLX';
+        this.responseObj = {
+            status: '',
+            message: '',
+            data: null
+        }
     }
     async getPosition(req) {
         let ip;

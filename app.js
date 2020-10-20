@@ -30,9 +30,11 @@ app.use(function(req, res, next) {
     if(req.body.token && req.path !== '/admin/register') {
         try{
             let decoded = jwt.verify(req.body.token, 'jiayan');
+            // console.log(decoded)
             req.decoded = decoded
             req.session = {}
             req.session.userId = decoded.user_ID
+            req.session.name = decoded.name
         } catch(e) {
             console.log(e.message);
             res.send({

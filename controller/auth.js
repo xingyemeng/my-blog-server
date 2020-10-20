@@ -3,6 +3,7 @@ const BaseClass = require('../baseClass/baseClass');
 class AuthController extends BaseClass{
     constructor() {
         super();
+        this.userRolesDetail = this.userRolesDetail.bind(this)
     }
     /**
      * 给用户添加角色
@@ -16,8 +17,6 @@ class AuthController extends BaseClass{
             res.send('当前用户不存在')
             return
         }
-        console.log(666)
-        return
         global.acl.addUserRoles(userId.toString(), roleName, err => {
             if(err) {
                 res.send('添加失败');
@@ -50,12 +49,32 @@ class AuthController extends BaseClass{
      * 查询用户角色
     */
    async userRoles(req, res) {
-        const {userName} = req.body;
+       console.log(req.decoded)
+        const userName = req.decoded ? req.decoded.name : req.body.userName
         const userId = await super.getUserId(userName);
         if(!userId) {
             res.send('当前用户不存在')
             return
         }
+        global.acl.userRoles(userId.toString(), (err, rolesList) => {
+            if(err) {
+                res.send('查询失败');
+            } else {
+
+                res.send(JSON.stringify(rolesList))
+            }
+        });
+    }
+
+    /**
+     * userRolesDetail
+     * 查询当前用户的角色、资源
+    */
+    async userRolesDetail(req, res) {
+        const userId = req.decoded.user_ID
+        // console.log(this.responseObj)
+        // return
+        Promise.all()
         global.acl.userRoles(userId.toString(), (err, rolesList) => {
             if(err) {
                 res.send('查询失败');

@@ -29,6 +29,7 @@ const AclController = require('../controller/acl')
 router.post('/addUserRoles',global.acl.middleware(), AuthController.addUserRoles);
 router.post('/removeUserRoles', AuthController.removeUserRoles);
 router.post('/userRoles', AuthController.userRoles);
+router.post('/userRolesDetail', AuthController.userRolesDetail);
 
 
 router.post('/addRoles', AclController.addRoles);
